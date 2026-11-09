@@ -16,10 +16,13 @@ class CreateProjectsTable extends Migration
         Schema::create('projects', function (Blueprint $table) {
             $table->id();
             $table->string('title');
+            $table->string('slug')->unique();
+            $table->text('summary')->nullable();
             $table->text('description');
-            $table->string('image_path')->nullable();
-            $table->string('link')->nullable();
-            $table->string('tech_stack')->nullable();
+            $table->string('thumbnail_url')->nullable();
+            $table->string('demo_url')->nullable();
+            $table->string('github_url')->nullable();
+            $table->boolean('is_featured')->default(false);
             $table->timestamps();
         });
     }

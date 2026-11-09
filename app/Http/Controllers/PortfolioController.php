@@ -24,7 +24,7 @@ class PortfolioController extends Controller
         try {
             DB::connection()->getPdo();
             $dbConnected = true;
-            $projects = Project::all();
+            $projects = Project::with('skills')->get();
             $experiences = Experience::orderBy('start_date', 'desc')->get();
         } catch (\Exception $e) {
             $dbConnected = false;
@@ -41,7 +41,13 @@ class PortfolioController extends Controller
             'content' => 'required'
         ]);
 
-        Message::create($request->all());
+        Message::create([
+            'sender_name' => $request->name,
+            'sender_email' => $request->email,
+            'subject' => $request->subject ?? 'Pesan dari Form Kontak Portofolio',
+            'body' => $request->content,
+            'is_read' => false,
+        ]);
 
         return redirect()->back()->with('success', 'Pesan Anda berhasil dikirim!');
     }

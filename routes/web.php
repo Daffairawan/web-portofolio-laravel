@@ -16,7 +16,7 @@ use App\Http\Controllers\PortfolioController;
 Route::get('/', [PortfolioController::class, 'index'])->name('home');
 Route::post('/contact', [PortfolioController::class, 'storeMessage'])->name('contact.store');
 
-// Route Khusus Verifikasi Lingkungan Backend & Koneksi Basis Data MySQL (Latihan 4A)
+// Route Khusus Verifikasi Lingkungan Backend & Koneksi Basis Data MySQL (Latihan 4A & 4B)
 Route::get('/cek-koneksi', function () {
     try {
         DB::connection()->getPdo();
@@ -24,10 +24,27 @@ Route::get('/cek-koneksi', function () {
         $dbHost = config('database.connections.mysql.host');
         $dbPort = config('database.connections.mysql.port');
 
+        $tables = [
+            'profiles',
+            'skills',
+            'projects',
+            'project_skill',
+            'experiences',
+            'certificates',
+            'messages',
+        ];
+
+        $ringkasanTabel = [];
+        foreach ($tables as $tabel) {
+            $ringkasanTabel[$tabel] = \Illuminate\Support\Facades\Schema::hasTable($tabel)
+                ? DB::table($tabel)->count() . ' baris'
+                : 'Belum dimigrasi';
+        }
+
         return response()->json([
             'status' => 'success',
             'pesan' => 'Alhamdulillah! Lingkungan backend Laravel berjalan normal dan sukses terhubung ke MySQL.',
-            'praktikum' => 'Latihan 4A - Fondasi Laravel & Konfigurasi Lingkungan Backend',
+            'praktikum' => 'Latihan 4B (BE-1b) - Desain Database, Migration, Eloquent Model & Seeder',
             'informasi_sistem' => [
                 'nama_database'    => $dbName,
                 'host_database'    => $dbHost . ':' . $dbPort,
@@ -36,7 +53,8 @@ Route::get('/cek-koneksi', function () {
                 'versi_php'        => phpversion(),
                 'environment'      => config('app.env'),
                 'waktu_pemeriksaan' => now()->toDateTimeString(),
-            ]
+            ],
+            'skema_7_tabel_portofolio' => $ringkasanTabel,
         ], 200, [], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
     } catch (\Exception $e) {
         return response()->json([

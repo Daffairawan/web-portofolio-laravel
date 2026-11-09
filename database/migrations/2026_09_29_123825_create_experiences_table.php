@@ -17,8 +17,10 @@ class CreateExperiencesTable extends Migration
             $table->id();
             $table->string('title');
             $table->string('organization');
-            $table->string('start_date');
-            $table->string('end_date')->nullable();
+            $table->string('type')->default('work'); // work, education, organization
+            $table->date('start_date');
+            $table->date('end_date')->nullable();
+            $table->boolean('is_current')->default(false);
             $table->text('description');
             $table->timestamps();
         });

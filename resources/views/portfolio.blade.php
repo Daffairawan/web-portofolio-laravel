@@ -1284,6 +1284,16 @@
 
             <div class="mt-8 pt-8 border-t border-slate-900 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 gap-4">
                 <p>&copy; {{ date('Y') }} Revaliano Daffa Irawan. Hak Cipta Dilindungi.</p>
+                
+                <!-- Latihan 4A: Indikator Verifikasi Lingkungan Backend & Database MySQL -->
+                <div class="flex items-center gap-2">
+                    <a href="{{ route('cek.koneksi') }}" target="_blank" title="Klik untuk memverifikasi API status backend" class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-[11px] font-medium transition-all {{ ($dbConnected ?? false) ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 hover:bg-emerald-500/20' : 'bg-amber-500/10 text-amber-400 border border-amber-500/30 hover:bg-amber-500/20' }}">
+                        <span class="w-1.5 h-1.5 rounded-full {{ ($dbConnected ?? false) ? 'bg-emerald-400 animate-pulse' : 'bg-amber-400' }}"></span>
+                        <span>Backend: {{ ($dbConnected ?? false) ? 'MySQL Terhubung (' . ($dbName ?? 'web_porto_laravel') . ')' : 'MySQL Offline (Siap Dihubungkan)' }}</span>
+                        <span class="text-[10px] text-slate-500 border-l border-slate-800 pl-1.5">Uji &rarr;</span>
+                    </a>
+                </div>
+
                 <p class="flex items-center gap-1">
                     Dibuat dengan <span class="text-sky-400">♥</span> menggunakan 
                     <span class="text-slate-300 font-semibold">Laravel & Tailwind CSS</span>

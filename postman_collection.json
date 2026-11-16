@@ -1,0 +1,246 @@
+{
+  "info": {
+    "_postman_id": "a1b2c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d",
+    "name": "Praktikum Pemrograman Web 2 - Latihan 5A (RESTful API GET)",
+    "description": "Koleksi pengujian Postman / Thunder Client untuk 5 Endpoint GET Portofolio Publik (Latihan 5A - BE-2a)\nPengembang: Revaliano Daffa Irawan",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://127.0.0.1:8000",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. GET Profile Mahasiswa",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/profile",
+          "host": ["{{base_url}}"],
+          "path": ["api", "profile"]
+        },
+        "description": "Mengambil data profil lengkap pemilik portofolio (nama, headline, bio, kontak, media sosial)."
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 200 OK\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "pm.test(\"Response success is true\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.success).to.be.true;",
+              "    pm.expect(jsonData.data).to.have.property('full_name');",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. GET Daftar Skills (Semua)",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/skills",
+          "host": ["{{base_url}}"],
+          "path": ["api", "skills"]
+        },
+        "description": "Mengambil semua daftar keahlian / tech stack portofolio."
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 200 OK\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "pm.test(\"Returns array of skills\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.success).to.be.true;",
+              "    pm.expect(Array.isArray(jsonData.data)).to.be.true;",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. GET Filter Skills (Frontend)",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/skills?category=Frontend",
+          "host": ["{{base_url}}"],
+          "path": ["api", "skills"],
+          "query": [
+            {
+              "key": "category",
+              "value": "Frontend"
+            }
+          ]
+        },
+        "description": "Mengambil keahlian yang difilter khusus kategori Frontend."
+      }
+    },
+    {
+      "name": "4. GET Daftar Projects (dengan Relasi Skills)",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/projects",
+          "host": ["{{base_url}}"],
+          "path": ["api", "projects"]
+        },
+        "description": "Mengambil daftar proyek portofolio lengkap dengan relasi Many-to-Many ke tabel skills via pivot."
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 200 OK\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "pm.test(\"Projects include skills array\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.success).to.be.true;",
+              "    if (jsonData.data.length > 0) {",
+              "        pm.expect(jsonData.data[0]).to.have.property('skills');",
+              "    }",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. GET Detail Project by Slug",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/projects/web-portofolio-mahasiswa-modern",
+          "host": ["{{base_url}}"],
+          "path": ["api", "projects", "web-portofolio-mahasiswa-modern"]
+        },
+        "description": "Mengambil detail satu proyek berdasarkan slug atau ID."
+      }
+    },
+    {
+      "name": "6. GET Daftar Experiences",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/experiences",
+          "host": ["{{base_url}}"],
+          "path": ["api", "experiences"]
+        },
+        "description": "Mengambil riwayat pengalaman kerja, organisasi, dan pendidikan."
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 200 OK\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "pm.test(\"Experiences response is valid\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.success).to.be.true;",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "7. GET Daftar Certificates",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/certificates",
+          "host": ["{{base_url}}"],
+          "path": ["api", "certificates"]
+        },
+        "description": "Mengambil daftar sertifikat kompetensi dan lisensi."
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 200 OK\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "pm.test(\"Certificates response is valid\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.success).to.be.true;",
+              "});"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

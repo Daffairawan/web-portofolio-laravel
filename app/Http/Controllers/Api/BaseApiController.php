@@ -38,3 +38,4 @@ class BaseApiController extends Controller
         return response()->json($response, $code, [], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
     }
 }
+

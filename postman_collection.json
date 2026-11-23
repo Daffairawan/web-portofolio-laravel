@@ -1,8 +1,8 @@
 {
   "info": {
     "_postman_id": "a1b2c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d",
-    "name": "Praktikum Pemrograman Web 2 - Latihan 5A (RESTful API GET)",
-    "description": "Koleksi pengujian Postman / Thunder Client untuk 5 Endpoint GET Portofolio Publik (Latihan 5A - BE-2a)\nPengembang: Revaliano Daffa Irawan",
+    "name": "Praktikum Pemrograman Web 2 - Latihan 5A & 5B (RESTful API Complete)",
+    "description": "Koleksi pengujian Postman / Thunder Client lengkap untuk:\n- Latihan 5A: 5 Endpoint GET Portofolio Publik\n- Latihan 5B: Endpoint POST Pengiriman Pesan Kontak dengan FormRequest Validation & Rate Limiting\nPengembang: Revaliano Daffa Irawan",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
@@ -29,7 +29,7 @@
           "host": ["{{base_url}}"],
           "path": ["api", "profile"]
         },
-        "description": "Mengambil data profil lengkap pemilik portofolio (nama, headline, bio, kontak, media sosial)."
+        "description": "Mengambil data profil lengkap pemilik portofolio."
       },
       "event": [
         {
@@ -187,24 +187,7 @@
           "path": ["api", "experiences"]
         },
         "description": "Mengambil riwayat pengalaman kerja, organisasi, dan pendidikan."
-      },
-      "event": [
-        {
-          "listen": "test",
-          "script": {
-            "type": "text/javascript",
-            "exec": [
-              "pm.test(\"Status code is 200 OK\", function () {",
-              "    pm.response.to.have.status(200);",
-              "});",
-              "pm.test(\"Experiences response is valid\", function () {",
-              "    var jsonData = pm.response.json();",
-              "    pm.expect(jsonData.success).to.be.true;",
-              "});"
-            ]
-          }
-        }
-      ]
+      }
     },
     {
       "name": "7. GET Daftar Certificates",
@@ -223,6 +206,34 @@
           "path": ["api", "certificates"]
         },
         "description": "Mengambil daftar sertifikat kompetensi dan lisensi."
+      }
+    },
+    {
+      "name": "8. POST Kirim Pesan Kontak (Valid - 201 Created)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"sender_name\": \"Alexander Graham\",\n  \"sender_email\": \"alexander@techcorp.com\",\n  \"subject\": \"Tawaran Kolaborasi Proyek Full-Stack Web\",\n  \"body\": \"Halo Revaliano, kami sangat terkesan dengan portofolio web dan desain UI/UX Anda. Kami ingin menawarkan kesempatan kerja sama proyek sistem informasi perusahaan kami.\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/portfolio/messages",
+          "host": ["{{base_url}}"],
+          "path": ["api", "portfolio", "messages"]
+        },
+        "description": "Mengirimkan pesan kontak yang valid melalui FormRequest. Mengharapkan status 201 Created."
       },
       "event": [
         {
@@ -230,10 +241,106 @@
           "script": {
             "type": "text/javascript",
             "exec": [
-              "pm.test(\"Status code is 200 OK\", function () {",
-              "    pm.response.to.have.status(200);",
+              "pm.test(\"Status code is 201 Created\", function () {",
+              "    pm.response.to.have.status(201);",
               "});",
-              "pm.test(\"Certificates response is valid\", function () {",
+              "pm.test(\"Response success is true with message data\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.success).to.be.true;",
+              "    pm.expect(jsonData.data).to.have.property('id');",
+              "    pm.expect(jsonData.data.sender_name).to.eql(\"Alexander Graham\");",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "9. POST Kirim Pesan Kontak (Gagal Validasi - 422 Unprocessable Entity)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"sender_name\": \"Al\",\n  \"sender_email\": \"bukan-email-yang-benar\",\n  \"subject\": \"\",\n  \"body\": \"pendek\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/portfolio/messages",
+          "host": ["{{base_url}}"],
+          "path": ["api", "portfolio", "messages"]
+        },
+        "description": "Mengirimkan data tidak valid (nama terlalu pendek, email salah format, body kurang dari 10 karakter). Mengharapkan status 422 Unprocessable Entity."
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 422 Unprocessable Entity\", function () {",
+              "    pm.response.to.have.status(422);",
+              "});",
+              "pm.test(\"Response success is false with error details\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.success).to.be.false;",
+              "    pm.expect(jsonData).to.have.property('errors');",
+              "    pm.expect(jsonData.errors).to.have.property('sender_name');",
+              "    pm.expect(jsonData.errors).to.have.property('sender_email');",
+              "    pm.expect(jsonData.errors).to.have.property('body');",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "10. POST Kirim Pesan Kontak (Alias Endpoint /api/messages)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Siti Rahmawati\",\n  \"email\": \"siti.rahma@company.com\",\n  \"subject\": \"Pertanyaan Layanan Pembuatan Web\",\n  \"content\": \"Halo, saya ingin menanyakan estimasi biaya dan waktu pengerjaan untuk website portofolio interaktif serupa.\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/messages",
+          "host": ["{{base_url}}"],
+          "path": ["api", "messages"]
+        },
+        "description": "Menguji pengiriman pesan menggunakan alias parameter (name, email, content) yang dinormalisasi otomatis oleh FormRequest."
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 201 Created\", function () {",
+              "    pm.response.to.have.status(201);",
+              "});",
+              "pm.test(\"Response success is true\", function () {",
               "    var jsonData = pm.response.json();",
               "    pm.expect(jsonData.success).to.be.true;",
               "});"

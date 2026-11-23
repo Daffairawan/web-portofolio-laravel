@@ -26,3 +26,4 @@ class SkillController extends BaseApiController
         ]);
     }
 }
+

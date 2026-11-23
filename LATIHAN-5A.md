@@ -111,3 +111,4 @@ File koleksi Postman telah disediakan di repositori: [`postman_collection.json`]
    - `6. GET Daftar Experiences` &rarr; `http://127.0.0.1:8000/api/experiences`
    - `7. GET Daftar Certificates` &rarr; `http://127.0.0.1:8000/api/certificates`
 5. Seluruh test assertion akan otomatis berstatus **PASSED (Status 200 OK & Valid JSON)**.
+

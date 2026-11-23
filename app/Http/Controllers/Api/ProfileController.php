@@ -21,3 +21,4 @@ class ProfileController extends BaseApiController
         return $this->sendResponse($profile, 'Data profil mahasiswa berhasil diambil.');
     }
 }
+
